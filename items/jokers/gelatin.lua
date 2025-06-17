@@ -1,9 +1,5 @@
 SMODS.Joker {
     key = 'gelatin',
-    loc_txt = {
-        name = 'Gelatin',
-        text = { 'Retriggers the next', '{C:attention}#1#{} scored {V:1}#2#{}', '{s:0.8,C:inactive}Suit changes each round' }
-    },
     atlas = 'Jokers',
     pos = {
         x = 6,
@@ -15,7 +11,12 @@ SMODS.Joker {
             cards_left = 50
         }
     },
-    blueprint_compat = false,
+    credit = {
+        art = "pinkzigzagoon",
+        code = "theAstra",
+        concept = "pinkzigzagoon"
+    },
+    blueprint_compat = true,
     cost = 4,
     pools = {
         Food = true
@@ -23,16 +24,18 @@ SMODS.Joker {
     loc_vars = function(self, info_queue, card)
         local stg = card.ability.extra
         return {
-            vars = { stg.cards_left, G.GAME.current_round.jello_suit,
-                colours = {G.C.SUITS[G.GAME.current_round.jello_suit]} 
+            vars = {
+                stg.cards_left,
+                G.GAME.current_round.mxms_jello_suit,
+                colours = { G.C.SUITS[G.GAME.current_round.mxms_jello_suit] }
             }
         }
     end,
     calculate = function(self, card, context)
         local stg = card.ability.extra
         if context.cardarea == G.play and context.repetition and stg.cards_left > 0 then
-            if context.other_card:is_suit(G.GAME.current_round.jello_suit) then
-                stg.cards_left = stg.cards_left - 1
+            if context.other_card:is_suit(G.GAME.current_round.mxms_jello_suit) then
+                stg.cards_left = stg.cards_left - (1 / G.GAME.mxms_fridge_mod)
                 return {
                     repetitions = 1,
                     message = localize('k_again_ex'),
@@ -66,10 +69,9 @@ SMODS.Joker {
                     end
                 }))
                 return {
-                    message = 'Eaten'
+                    message = localize('k_eaten_ex')
                 }
             end
         end
-
     end
 }

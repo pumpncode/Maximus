@@ -1,9 +1,6 @@
+---@diagnostic disable: undefined-field
 SMODS.Joker {
     key = 'hopscotch',
-    loc_txt = {
-        name = 'Hopscotch',
-        text = { 'When selecting blind,', '{C:green}#1# in #2#{} chance to', 'receive associated skip tag' }
-    },
     atlas = 'Jokers',
     pos = {
         x = 3,
@@ -14,6 +11,11 @@ SMODS.Joker {
             prob = 1,
             odds = 3
         }
+    },
+    credit = {
+        art = "Maxiss02",
+        code = "theAstra",
+        concept = "Maxiss02"
     },
     rarity = 1,
     blueprint_compat = false,
@@ -28,21 +30,32 @@ SMODS.Joker {
         local stg = card.ability.extra
         if context.setting_blind and G.GAME.blind:get_type() ~= 'Boss' and not context.blueprint then
             if pseudorandom(pseudoseed('hopscotch' .. G.GAME.round_resets.ante)) < stg.prob * G.GAME.probabilities.normal / stg.odds then
-                local _tag = G.GAME.skip_tag
+                local _tag = G.GAME.mxms_skip_tag
                 if _tag and _tag.config then
                     play_sound('generic1')
                     card:juice_up(0.3, 0.4)
                     add_tag(_tag.config.ref_table)
-                    G.GAME.skip_tag = ''
+                    G.GAME.mxms_skip_tag = ''
                 end
             else
                 return {
                     sound = 'tarot2',
                     card = card,
                     message = localize('k_nope_ex'),
-                    colour = G.C.SET.Tarot
+                    colour = G.C.SET.Tarot,
+                    func = function()
+                        SMODS.calculate_context({
+                            mxms_failed_prob = true,
+                            odds = stg.odds -
+                                (stg.prob * G.GAME.probabilities.normal),
+                            card = card
+                        })
+                    end
                 }
             end
         end
-    end
+    end,
+    in_pool = function(self, args)
+        return not G.GAME.modifiers.disable_blind_skips
+    end,
 }

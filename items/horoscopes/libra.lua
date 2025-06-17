@@ -1,10 +1,6 @@
 SMODS.Consumable {
     key = 'libra',
     set = 'Horoscope',
-    loc_txt = {
-        name = 'Libra',
-        text = { 'Spend at least {C:money}$#1#{} during the', 'next shop to make the next', 'shop\'s offerings {C:money}free{}', '{C:inactive}Currently: #2#/#1#' }
-    },
     atlas = 'Consumables',
     pos = {
         x = 6,
@@ -16,9 +12,15 @@ SMODS.Consumable {
             goal = 15
         }
     },
+    credit = {
+        art = "Maxiss02",
+        code = "theAstra",
+        concept = "Maxiss02"
+    },
     cost = 4,
     loc_vars = function(self, info_queue, card)
         local stg = card.ability.extra
+        info_queue[#info_queue + 1] = G.P_TAGS['tag_mxms_scale']
         return { vars = { stg.goal, stg.money_spent } }
     end,
     calculate = function(self, card, context)
@@ -30,7 +32,7 @@ SMODS.Consumable {
                 stg.money_spent = stg.money_spent + context.cost
             end
 
-            SMODS.calculate_effect({ message = stg.money_spent .. "/" .. stg.goal, colour = G.C.HOROSCOPE },
+            SMODS.calculate_effect({ message = stg.money_spent .. "/" .. stg.goal, colour = Maximus.C.HOROSCOPE },
                 card)
 
             if stg.money_spent >= stg.goal then
@@ -66,26 +68,42 @@ SMODS.Consumable {
         return true
     end,
     succeed = function(self, card)
-        G.GAME.libra_bonus = true
-        SMODS.calculate_effect({ message = "Success!", colour = G.C.GREEN, sound = 'tarot1' }, card)
+        SMODS.calculate_effect(
+            {
+                message = localize('k_mxms_success_ex'),
+                colour = G.C.GREEN,
+                sound = 'tarot1',
+                func = function()
+                    set_horoscope_success(card)
+                    check_for_unlock({ type = "all_horoscopes" })
+                end
+            }, card)
+        G.E_MANAGER:add_event(Event({
+            func = (function()
+                add_tag(Tag('tag_mxms_scale'))
+                play_sound('generic1', 0.9 + math.random() * 0.1, 0.8)
+                play_sound('holo1', 1.2 + math.random() * 0.1, 0.4)
+                return true
+            end)
+        }))
         G.E_MANAGER:add_event(Event({
             trigger = 'after',
             func = function()
-                card:start_dissolve({ G.C.HOROSCOPE }, nil, 1.6)
+                card:start_dissolve({ Maximus.C.HOROSCOPE }, nil, 1.6)
                 return true
             end
         }))
         zodiac_killer_pools["Libra"] = false
-        SMODS.calculate_context({beat_horoscope = true})
+        SMODS.calculate_context({ mxms_beat_horoscope = true })
     end,
     fail = function(self, card)
         local stg = card.ability.extra
-        SMODS.calculate_effect({ message = "Failed!", colour = G.C.RED, sound = 'tarot2' }, card)
+        SMODS.calculate_effect({ message = localize('k_mxms_failed_ex'), colour = G.C.RED, sound = 'tarot2' }, card)
         if not next(SMODS.find_card('j_mxms_cheat_day')) then
             G.E_MANAGER:add_event(Event({
                 trigger = 'after',
                 func = function()
-                    card:start_dissolve({ G.C.HOROSCOPE }, nil, 1.6)
+                    card:start_dissolve({ Maximus.C.HOROSCOPE }, nil, 1.6)
                     return true
                 end
             }))
@@ -108,6 +126,6 @@ SMODS.Consumable {
                 end
             }))
         end
-        SMODS.calculate_context({failed_horoscope = true})
+        SMODS.calculate_context({ mxms_failed_horoscope = true })
     end
 }

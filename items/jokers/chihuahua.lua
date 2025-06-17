@@ -1,9 +1,5 @@
 SMODS.Joker {
     key = 'chihuahua',
-    loc_txt = {
-        name = 'Chihuahua',
-        text = { '{C:attention}Retriggers{} cards with ranks that appear', 'the {C:attention}least{} number of times in the deck the', 'same number of times that rank appears', '{s:0.8,C:inactive}Does not activate if there is a tie', '{s:0.8,C:inactive}Limit of 10 retriggers' }
-    },
     atlas = 'Jokers',
     pos = {
         x = 2,
@@ -17,11 +13,16 @@ SMODS.Joker {
             tie = false
         }
     },
+    credit = {
+        art = "Maxiss02",
+        code = "theAstra",
+        concept = "Maxiss02"
+    },
     blueprint_compat = true,
     cost = 8,
     calculate = function(self, card, context)
         local stg = card.ability.extra
-        if context.before then
+        if context.before and not context.blueprint then
             local ranks = {
                 ["2"] = { freq = 0, id = '2' },
                 ["3"] = { freq = 0, id = '3' },
@@ -72,7 +73,7 @@ SMODS.Joker {
             }
         end
 
-        if context.after then
+        if context.after and not context.blueprint then
             stg.least_id = '0'
             stg.least_count = 0
             stg.tie = false

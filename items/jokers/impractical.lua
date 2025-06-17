@@ -1,11 +1,5 @@
 SMODS.Joker {
     key = 'impractical_joker',
-    loc_txt = {
-        name = 'Impractical Joker',
-        text = { 'If a {C:attention}#4#{} is played,', '{X:mult,C:white}X#2#{} Mult. If three hands in a',
-            'row are not this hand type, {X:mult,C:white}X#3#{} Mult', '{s:0.8,C:inactive}Hand rotates every round',
-            '{C:inactive}Fail streak: #1#' }
-    },
     atlas = 'Jokers',
     pos = {
         x = 6,
@@ -19,28 +13,30 @@ SMODS.Joker {
             fails = 0
         }
     },
+    credit = {
+        art = "Maxiss02",
+        code = "theAstra",
+        concept = "Maxiss02"
+    },
     blueprint_compat = true,
     cost = 6,
     loc_vars = function(self, info_queue, card)
         local stg = card.ability.extra
         return {
-            vars = { stg.fails, stg.Xmult, stg.fail_Xmult, G.localization.misc.poker_hands[G.GAME.current_round.impractical_hand] }
+            vars = { stg.fails, stg.Xmult, stg.fail_Xmult, G.localization.misc.poker_hands[G.GAME.current_round.mxms_impractical_hand] }
         }
     end,
     calculate = function(self, card, context)
         local stg = card.ability.extra
         if context.joker_main then
             -- If correct hand is played
-            if context.scoring_name == G.GAME.current_round.impractical_hand then
+            if context.scoring_name == G.GAME.current_round.mxms_impractical_hand then
                 if not context.blueprint then
                     stg.fails = 0
                 end
 
                 return {
-                    message = 'X' .. stg.Xmult,
-                    Xmult_mod = stg.Xmult,
-                    colour = G.C.MULT,
-                    card = card
+                    x_mult = stg.Xmult,
                 }
 
                 -- If incorrect hand is played
@@ -52,7 +48,7 @@ SMODS.Joker {
                 -- If below 3 fails
                 if stg.fails < 3 then
                     return {
-                        message = 'Fail ' .. stg.fails,
+                        message = localize('k_mxms_fail') .. ' ' .. stg.fails,
                         colour = G.C.RED,
                         card = card
                     }

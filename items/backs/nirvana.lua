@@ -1,17 +1,18 @@
 SMODS.Back {
     key = 'nirvana',
-    loc_txt = {
-        name = 'Nirvana Deck',
-        text = { 'Rerolls start at {C:money}$0{}', 'Shop items cost {X:mult,C:white}X1.5{} as much' }
-    },
-    atlas = 'Backs',
+    atlas = 'Modifiers',
     pos = {
         x = 1,
         y = 0
     },
+    credit = {
+    art = "Maxiss02",
+    code = "theAstra",
+    concept = "Maxiss02"
+    },
     apply = function(self, back)
         --Change shop prices
-        G.GAME.shop_price_multiplier = 1.5
+        G.GAME.mxms_shop_price_multiplier = 1.5
 
         -- Change reroll starting price
         G.GAME.starting_params.reroll_cost = 0

@@ -1,25 +1,34 @@
 SMODS.Joker {
     key = 'phoenix',
-    loc_txt = {
-        name = 'Phoenix',
-        text = { 'After scoring, all scored {C:attention}Face{} cards', 'are {C:red}destroyed{};', 'If any face cards are destroyed, give', 'a {C:attention}Red Seal{} to all other scoring cards' }
-    },
-    atlas = 'Placeholder',
+    atlas = 'Jokers',
     pos = {
-        x = 3,
-        y = 0
+        x = 7,
+        y = 7
+    },
+    soul_pos = {
+        x = 7,
+        y = 8
     },
     rarity = 4,
-    blueprint_compat = true,
+    unlocked = false,
+    unlock_condition = {
+        type = '',
+        extra = '',
+        hidden = true
+    },
+    blueprint_compat = false,
     cost = 20,
-    config = {
+    credit = {
+        art = "Maxiss02",
+        code = "theAstra",
+        concept = "anerdymous"
     },
     loc_vars = function(self, info_queue, card)
         info_queue[#info_queue + 1] = G.P_SEALS.Red
     end,
     calculate = function(self, card, context)
         local stg = card.ability.extra
-        if context.after then
+        if context.after and not context.blueprint then
             local faces = 0
             for k, v in pairs(context.scoring_hand) do
                 if v:is_face() then
@@ -51,7 +60,7 @@ SMODS.Joker {
                     end
                 end
                 return {
-                    message = 'Deserved!',
+                    message = localize('k_mxms_deserved_ex'),
                     colour = G.C.RED
                 }
             end

@@ -1,10 +1,6 @@
 SMODS.Consumable {
     key = 'ophiucus',
     set = 'Spectral',
-    loc_txt = {
-        name = 'Ophiucus',
-        text = { 'Play every non-secret hand type', 'within the next {C:attention}#2#{} antes to', 'create a {C:dark_edition}Negative {C:spectral}Soul', '{C:inactive}Currently: #1#/9' }
-    },
     atlas = 'Consumables',
     pos = {
         x = 1,
@@ -28,7 +24,14 @@ SMODS.Consumable {
             handtypes_played = 0
         }
     },
+    credit = {
+        art = "Maxiss02",
+        code = "theAstra",
+        concept = "Maxiss02"
+    },
     hidden = true,
+    soul_set = 'Horoscope',
+    soul_rate = 0.003,
     cost = 4,
     loc_vars = function(self, info_queue, card)
         local stg = card.ability
@@ -40,7 +43,7 @@ SMODS.Consumable {
         if context.before and not stg.hands[context.scoring_name] then
             stg.hands[context.scoring_name] = true
             stg.extra.handtypes_played = stg.extra.handtypes_played + 1
-            SMODS.calculate_effect({ message = stg.extra.handtypes_played .. "/9", colour = G.C.HOROSCOPE }, card)
+            SMODS.calculate_effect({ message = stg.extra.handtypes_played .. "/9", colour = Maximus.C.HOROSCOPE }, card)
 
             local all_hands = true
             for k, v in pairs(stg.hands) do
@@ -59,12 +62,17 @@ SMODS.Consumable {
             if stg.extra.antes >= stg.extra.ante_limit then
                 self:fail(card)
             else
-                SMODS.calculate_effect({ message = stg.extra.ante_limit - stg.extra.antes .. " Ante Left..." , colour = G.C.HOROSCOPE }, card)
+                SMODS.calculate_effect(
+                { message = stg.extra.ante_limit - stg.extra.antes .. " Ante Left...", colour = Maximus.C.HOROSCOPE }, card)
             end
         end
     end,
     succeed = function(self, card)
-        SMODS.calculate_effect({ message = "Success!", colour = G.C.GREEN, sound = 'tarot1' }, card)
+        SMODS.calculate_effect(
+        { message = localize('k_mxms_success_ex'), colour = G.C.GREEN, sound = 'tarot1', func = function()
+            set_horoscope_success(card)
+            check_for_unlock({ type = "all_horoscopes" })
+        end }, card)
         G.E_MANAGER:add_event(Event({
             trigger = 'before',
             func = function()
@@ -80,22 +88,22 @@ SMODS.Consumable {
                 return true;
             end
         }))
-        SMODS.calculate_context({ beat_horoscope = true })
+        SMODS.calculate_context({ mxms_beat_horoscope = true })
         G.E_MANAGER:add_event(Event({
             func = function()
-                card:start_dissolve({ G.C.HOROSCOPE }, nil, 1.6)
+                card:start_dissolve({ Maximus.C.HOROSCOPE }, nil, 1.6)
                 return true
             end
         }))
     end,
     fail = function(self, card)
         local stg = card.ability
-        SMODS.calculate_effect({ message = "Failed!", colour = G.C.RED, sound = 'tarot2' }, card)
+        SMODS.calculate_effect({ message = localize('k_mxms_failed_ex'), colour = G.C.RED, sound = 'tarot2' }, card)
         if not next(SMODS.find_card('j_mxms_cheat_day')) then
             G.E_MANAGER:add_event(Event({
                 trigger = 'after',
                 func = function()
-                    card:start_dissolve({ G.C.HOROSCOPE }, nil, 1.6)
+                    card:start_dissolve({ Maximus.C.HOROSCOPE }, nil, 1.6)
                     return true
                 end
             }))
@@ -112,7 +120,7 @@ SMODS.Consumable {
                 ["High Card"] = false,
             }
         end
-        SMODS.calculate_context({ failed_horoscope = true })
+        SMODS.calculate_context({ mxms_failed_horoscope = true })
     end,
     add_to_deck = function(self, card, from_debuff)
         local stg = card.ability
@@ -127,5 +135,10 @@ SMODS.Consumable {
             ["Pair"] = false,
             ["High Card"] = false,
         }
+    end,
+    set_badges = function(self, card, badges)
+        if self.discovered then
+            badges[#badges + 1] = create_badge(localize('k_horoscope'), Maximus.C.SET.Horoscope, G.C.WHITE, 1.2)
+        end
     end
 }

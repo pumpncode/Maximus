@@ -1,12 +1,5 @@
 SMODS.Joker {
     key = 'streaker',
-    loc_txt = {
-        name = 'Streaker',
-        text = { '{C:chips}+#5#{} Chips and {C:mult}+#6#{} Mult', 'for each consecutive {C:attention}blind{}',
-            'beaten in {C:attention}one hand{}, {C:red}Resets{}', 'when streak is broken',
-            '{C:inactive}Current streak: #1#',
-            '{C:inactive}Currently: {C:chips}+#3# {C:inactive}Chips, {C:mult}+#4# {C:inactive}Mult' }
-    },
     atlas = 'Jokers',
     pos = {
         x = 5,
@@ -23,12 +16,17 @@ SMODS.Joker {
             mult_gain = 5
         }
     },
+    credit = {
+        art = "Maxiss02",
+        code = "theAstra",
+        concept = "Maxiss02"
+    },
     blueprint_compat = true,
     cost = 8,
     loc_vars = function(self, info_queue, card)
         local stg = card.ability.extra
         return {
-            vars = { stg.streak, stg.hands, stg.chips, stg.mult, stg.chip_gain * G.GAME.soil_mod, stg.mult_gain * G.GAME.soil_mod }
+            vars = { stg.streak, stg.hands, stg.chips, stg.mult, stg.chip_gain * G.GAME.mxms_soil_mod, stg.mult_gain * G.GAME.mxms_soil_mod }
         }
     end,
     calculate = function(self, card, context)
@@ -37,7 +35,7 @@ SMODS.Joker {
             return {
                 mult_mod = stg.mult,
                 chip_mod = stg.chips,
-                message = 'Streaked!',
+                message = localize('k_mxms_streaked_ex'),
                 colour = G.C.MULT,
                 card = card
             }
@@ -61,13 +59,13 @@ SMODS.Joker {
             if stg.hands == 1 then
                 stg.hands = 0
                 stg.streak = stg.streak + 1
-                stg.chips = stg.chip_gain * stg.streak * G.GAME.soil_mod
-                stg.mult = stg.mult_gain * stg.streak * G.GAME.soil_mod
-                SMODS.calculate_context({scaling_card = true})
+                stg.chips = stg.chip_gain * stg.streak * G.GAME.mxms_soil_mod
+                stg.mult = stg.mult_gain * stg.streak * G.GAME.mxms_soil_mod
                 return {
                     message = 'Streak ' .. stg.streak,
                     colour = G.C.CHIPS,
-                    card = card
+                    card = card,
+                    func = function() SMODS.calculate_context({ mxms_scaling_card = true }) end
                 }
             else
                 stg.hands = 0

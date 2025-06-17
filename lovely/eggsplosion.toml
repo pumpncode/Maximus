@@ -11,10 +11,10 @@ pattern = '''
 if self.ability.name == 'Egg' then
     self.ability.extra_value = self.ability.extra_value + self.ability.extra
     if next(SMODS.find_card('j_mxms_soil')) then
-        self.ability.extra_value = self.ability.extra_value + self.ability.extra * (G.GAME.soil_mod - 1)
+        self.ability.extra_value = self.ability.extra_value + self.ability.extra * (G.GAME.mxms_soil_mod - 1)
     end
     self:set_cost()
-    SMODS.calculate_context({scaling_card = true})
+    SMODS.calculate_context({mxms_scaling_card = true})
 '''
 position = "after"
 payload = '''
@@ -24,11 +24,13 @@ if next(SMODS.find_card('j_mxms_microwave')) and pseudorandom('eggsplode' .. G.G
             play_sound('mxms_eggsplosion')
             ease_dollars(self.sell_cost)
             self:start_dissolve({G.C.ORANGE}, nil, 1.6)
+
+            check_for_unlock({ type = "eggsplosion" })
             return true;
         end
     }))
     return {
-        message = 'Exploded...',
+        message = localize('k_mxms_exploded_el'),
         colour = G.C.MONEY
     }
 end
