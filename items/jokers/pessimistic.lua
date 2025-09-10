@@ -12,10 +12,10 @@ SMODS.Joker {
             lucky_gain = 3
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     blueprint_compat = true,
     cost = 7,
@@ -33,23 +33,32 @@ SMODS.Joker {
             }
         end
 
-        if context.individual and context.cardarea == G.play and not context.end_of_round and context.other_card.ability.effect == 'Lucky Card' and
-            not context.other_card.lucky_trigger and not context.blueprint then
-            stg.mult = stg.mult + card.ability.extra.lucky_gain
-            return {
-                message = localize('k_upgrade_ex'),
-                colour = G.C.ATTENTION,
-                func = function() SMODS.calculate_context({ mxms_scaling_card = true }) end
-            }
-        end
-
-        if context.mxms_failed_prob and not context.blueprint then
-            stg.mult = stg.mult + context.odds
-            return {
-                message = localize('k_upgrade_ex'),
-                colour = G.C.ATTENTION,
-                func = function() SMODS.calculate_context({ mxms_scaling_card = true }) end
-            }
+        if context.pseudorandom_result and (not context.result and not Maximus.is_invert_prob_check(context.trigger_obj) or context.success and Maximus.is_invert_prob_check(context.trigger_obj)) and not context.blueprint then
+            if context.trigger_obj and context.trigger_obj.ability and context.trigger_obj.ability.effect == 'Lucky Card' then
+                SMODS.scale_card(card, {
+                    ref_table = stg,
+                    ref_value = "mult",
+                    scalar_value = "lucky_gain",
+                    message_colour = G.C.ATTENTION
+                })
+                return nil, true
+            else
+                stg.temp_gain = context.denominator - context.numerator
+                SMODS.scale_card(card, {
+                    ref_table = stg,
+                    ref_value = "mult",
+                    scalar_value = "temp_gain",
+                    message_colour = G.C.ATTENTION
+                })
+                stg.temp_gain = 0
+                return nil, true
+            end
         end
     end
+}
+
+SMODS.JimboQuip {
+    key = 'lq_pessimistic',
+    type = 'loss',
+    extra = { center = 'j_mxms_pessimistic' }
 }

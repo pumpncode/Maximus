@@ -12,10 +12,10 @@ if Maximus_config.horoscopes then
                 dollars = 5
             }
         },
-        credit = {
-            art = "Maxiss02",
-            code = "theAstra",
-            concept = "Maxiss02"
+        mxms_credits = {
+            art = { "Maxiss02" },
+            code = { "theAstra" },
+            idea = { "Maxiss02" }
         },
         blueprint_compat = true,
         cost = 7,
@@ -35,6 +35,18 @@ if Maximus_config.horoscopes then
                 end
             end
         end
+    }
+
+    SMODS.JimboQuip {
+        key = 'lq_employee',
+        type = 'loss',
+        extra = { center = 'j_mxms_employee' }
+    }
+
+    SMODS.JimboQuip {
+        key = 'wq_employee',
+        type = 'win',
+        extra = { center = 'j_mxms_employee' }
     }
 else
     sendDebugMessage("Employee not loaded; Horoscopes Disabled", 'Maximus')

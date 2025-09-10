@@ -7,10 +7,10 @@ SMODS.Joker {
         y = 2
     },
     rarity = 2,
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     blueprint_compat = false,
     cost = 5,
@@ -50,3 +50,15 @@ function Card:set_ability(center, initial, delay_sprites)
         self.config.center.no_suit = false
     end
 end
+
+local shf = Card.should_hide_front
+function Card:should_hide_front()
+    if self.ability.effect == 'Stone Card' and next(SMODS.find_card('j_mxms_hammer_and_chisel')) then return false end
+    return shf(self)
+end
+
+SMODS.JimboQuip {
+    key = 'wq_hammer_and_chisel',
+    type = 'win',
+    extra = { center = 'j_mxms_hammer_and_chisel' }
+}

@@ -5,12 +5,12 @@ SMODS.Joker {
         x = 4,
         y = 10
     },
-    credit = {
-        art = "anerdymous",
-        code = "theAstra",
-        concept = "anerdymous"
+    mxms_credits = {
+        art = { "anerdymous" },
+        code = { "theAstra" },
+        idea = { "anerdymous" }
     },
-    rarity = 2,
+    rarity = 3,
     blueprint_compat = false,
     cost = 6,
     loc_vars = function(self, info_queue, card)
@@ -34,4 +34,10 @@ SMODS.Joker {
             }
         end
     end
+}
+
+SMODS.JimboQuip {
+    key = 'wq_pngoker',
+    type = 'loss',
+    extra = { center = 'j_mxms_pngoker' }
 }

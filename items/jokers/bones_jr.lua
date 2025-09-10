@@ -10,12 +10,12 @@ SMODS.Joker {
             extra_hands = 1
         }
     },
-    credit = {
-        art = "LocalThunk",
-        code = "theAstra",
-        concept = "pinkzigzagoon"
+    mxms_credits = {
+        code = { "theAstra" },
+        idea = { "pinkzigzagoon" }
     },
     blueprint_compat = false,
+    eternal_compat = false,
     cost = 4,
     loc_vars = function(self, info_queue, card)
         local stg = card.ability.extra

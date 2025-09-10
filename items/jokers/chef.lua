@@ -5,10 +5,10 @@ SMODS.Joker {
         x = 0,
         y = 2
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     rarity = 1,
     blueprint_compat = true,
@@ -28,4 +28,16 @@ SMODS.Joker {
             }))
         end
     end
+}
+
+SMODS.JimboQuip {
+    key = 'lq_chef',
+    type = 'loss',
+    extra = { center = 'j_mxms_chef' }
+}
+
+SMODS.JimboQuip {
+    key = 'wq_chef',
+    type = 'win',
+    extra = { center = 'j_mxms_chef' }
 }

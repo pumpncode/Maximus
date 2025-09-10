@@ -11,10 +11,10 @@ SMODS.Joker {
             Xmult = 2
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "theAstra"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "theAstra" }
     },
     blueprint_compat = true,
     cost = 7,
@@ -36,5 +36,14 @@ SMODS.Joker {
                 }
             end
         end
+    end,
+    in_pool = function(self, args)
+        for k, v in pairs(G.playing_cards) do
+            if v.edition and v.edition.polychrome and v:is_face() then
+                return true
+            end
+        end
+
+        return false
     end
 }

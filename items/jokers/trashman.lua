@@ -11,10 +11,10 @@ SMODS.Joker {
             money = 1
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "pinkzigzagoon"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "pinkzigzagoon" }
     },
     blueprint_compat = true,
     cost = 5,
@@ -34,4 +34,10 @@ SMODS.Joker {
             }
         end
     end
+}
+
+SMODS.JimboQuip {
+    key = 'lq_trashman',
+    type = 'loss',
+    extra = { center = 'j_mxms_trashman' }
 }

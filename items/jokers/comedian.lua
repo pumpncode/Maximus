@@ -10,25 +10,29 @@ SMODS.Joker {
         extra = {
             Xmult = 1,
             gain = 1,
+            prob = 1,
             odds = 50
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "theAstra"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "theAstra" }
     },
     blueprint_compat = true,
     cost = 4,
+    pools = {
+        Food = true
+    },
     loc_vars = function(self, info_queue, card)
         local stg = card.ability.extra
-        return { vars = { stg.Xmult, stg.gain, G.GAME.probabilities.normal, stg.odds * G.GAME.mxms_fridge_mod } }
+        return { vars = { stg.Xmult, stg.gain, SMODS.get_probability_vars(card, stg.prob, stg.odds, 'comedian') } }
     end,
     calculate = function(self, card, context)
         local stg = card.ability.extra
 
         if context.end_of_round and not context.blueprint and not context.repetition and not context.individual then
-            if pseudorandom('comedian') < G.GAME.probabilities.normal / stg.odds * G.GAME.mxms_fridge_mod then
+            if SMODS.pseudorandom_probability(card, 'comedian', stg.prob, stg.odds) then
                 G.E_MANAGER:add_event(Event({
                     func = function()
                         play_sound('tarot1')
@@ -43,11 +47,6 @@ SMODS.Joker {
                             func = function()
                                 G.jokers:remove_card(card)
                                 card:remove()
-                                SMODS.calculate_context({
-                                    mxms_failed_prob = true,
-                                    odds = stg.odds -
-                                        G.GAME.probabilities.normal
-                                })
                                 card = nil
                                 return true;
                             end
@@ -59,19 +58,14 @@ SMODS.Joker {
                     message = localize('k_extinct_ex')
                 }
             else
-                stg.Xmult = stg.Xmult + stg.gain * G.GAME.mxms_soil_mod
-                G.E_MANAGER:add_event(Event({
-                    func = function()
-                        SMODS.calculate_effect(
-                            {
-                                message = localize { type = 'variable', key = 'a_xmult', vars = { stg.Xmult } },
-                                colour = G.C
-                                    .MULT
-                            }, card)
-                        return true
-                    end
-                }))
-                SMODS.calculate_context({ mxms_scaling_card = true })
+                SMODS.scale_card(card, {
+                    ref_table = stg,
+                    ref_value = "Xmult",
+                    scalar_value = "gain",
+                    message_key = 'a_mult',
+                    message_colour = G.C.MULT
+                })
+                return nil, true
             end
         end
 

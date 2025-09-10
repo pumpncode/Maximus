@@ -12,10 +12,10 @@ SMODS.Joker {
             gain = 0.25
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     blueprint_compat = true,
     cost = 7,
@@ -54,11 +54,22 @@ SMODS.Joker {
             end
             stg.Xmult = stg.Xmult + glass * stg.gain
             return {
-                card = card,
                 message = localize('k_mxms_eureka_ex'),
                 colour = G.C.ATTENTION,
                 func = function() SMODS.calculate_context({ mxms_scaling_card = true }) end
             }
         end
-    end,
+    end
+}
+
+SMODS.JimboQuip {
+    key = 'lq_poindexter',
+    type = 'loss',
+    extra = { center = 'j_mxms_poindexter' }
+}
+
+SMODS.JimboQuip {
+    key = 'wq_poindexter',
+    type = 'win',
+    extra = { center = 'j_mxms_poindexter' }
 }

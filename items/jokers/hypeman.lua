@@ -11,10 +11,10 @@ SMODS.Joker {
             dollars = 1
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     blueprint_compat = false,
     cost = 6,
@@ -26,20 +26,23 @@ SMODS.Joker {
     end,
     calculate = function(self, card, context)
         local stg = card.ability.extra
-    
-        if context.enhancing_card then
+
+        if context.setting_ability and string.sub(context.new, 1, 2) == 'm_' then
+            ease_dollars(stg.dollars)
             return {
-                dollars = stg.dollars,
+                message = localize('$') .. stg.dollars,
+                colour = G.C.GOLD,
                 sound = 'mxms_hey'
             }
         end
     end,
 }
 
-local csa = Card.set_ability
-function Card:set_ability(center, initial, delay_sprites)
-    csa(self, center, initial, delay_sprites)
-    if center.set == "Enhanced" and (G.STATE ~= G.STATES.SMODS_BOOSTER_OPENED and G.STATE ~= G.STATES.SHOP and not G.SETTINGS.paused or G.TAROT_INTERRUPT) then
-        SMODS.calculate_context({enhancing_card = true})
-    end
-end
+SMODS.JimboQuip {
+    key = 'wq_hypeman',
+    type = 'win',
+    extra = {
+        center = 'j_mxms_hypeman',
+        sound = 'mxms_hey'
+    }
+}

@@ -5,10 +5,15 @@ SMODS.Joker {
         x = 5,
         y = 4
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    config = {
+        extra = {
+            reps = 1
+        }
+    },
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     rarity = 1,
     blueprint_compat = true,
@@ -19,12 +24,13 @@ SMODS.Joker {
         return {}
     end,
     calculate = function(self, card, context)
+        local stg = card.ability.extra
         if context.repetition and context.cardarea == G.play and
             (SMODS.has_enhancement(context.other_card, 'm_bonus') or
             SMODS.has_enhancement(context.other_card, 'm_mult')) then
             return {
                 message = localize('k_again_ex'),
-                repetitions = 1,
+                repetitions = stg.reps,
                 card = card
             }
         end
@@ -38,4 +44,16 @@ SMODS.Joker {
 
         return false
     end
+}
+
+SMODS.JimboQuip {
+    key = 'lq_light_show',
+    type = 'loss',
+    extra = { center = 'j_mxms_light_show' }
+}
+
+SMODS.JimboQuip {
+    key = 'wq_light_show',
+    type = 'win',
+    extra = { center = 'j_mxms_light_show' }
 }

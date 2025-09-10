@@ -8,16 +8,16 @@ SMODS.Joker {
     rarity = 2,
     config = {
         extra = {
-            gain = 0.5,
+            gain = 0.25,
             target_chips = 200,
             accrued_chips = 0,
             Xmult = 1
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "theAstra"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "theAstra" }
     },
     blueprint_compat = true,
     cost = 4,
@@ -39,9 +39,12 @@ SMODS.Joker {
                 func = function()
                     if stg.accrued_chips >= stg.target_chips then
                         stg.accrued_chips = stg.accrued_chips - stg.target_chips
-                        stg.Xmult = stg.Xmult + stg.gain * G.GAME.mxms_soil_mod
-                        SMODS.calculate_effect({ message = localize('k_upgrade_ex'), colour = G.C.attention }, card)
-                        SMODS.calculate_context({ mxms_scaling_card = true })
+                        SMODS.scale_card(card,{
+                            ref_table = stg,
+                            ref_value = "Xmult",
+                            scalar_value = "gain",
+                            message_colour = G.C.ATTENTION
+                        })
                     end
                 end
             }

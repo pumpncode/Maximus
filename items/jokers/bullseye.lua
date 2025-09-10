@@ -12,10 +12,10 @@ SMODS.Joker {
             base_gain = 100
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     blueprint_compat = true,
     cost = 5,
@@ -39,13 +39,15 @@ SMODS.Joker {
 
         if context.end_of_round and not context.repetition and not context.individual and not context.blueprint and
             to_big(G.GAME.blind.chips) == to_big(G.GAME.chips) then
-            stg.chips = stg.chips + stg.base_gain * G.GAME.round
-            return {
-                message = localize('k_upgrade_ex'),
-                colour = G.C.CHIPS,
-                card = card,
-                func = function() SMODS.calculate_context({ mxms_scaling_card = true }) end
-            }
+            stg.temp_gain = stg.base_gain * G.GAME.round
+            SMODS.scale_card(card, {
+                ref_table = stg,
+                ref_value = "chips",
+                scalar_value = "temp_gain",
+                message_colour = G.C.CHIPS
+            })
+            stg.temp_gain = nil
+            return nil, true
         end
     end
 }

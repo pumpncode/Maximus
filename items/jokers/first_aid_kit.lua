@@ -14,10 +14,10 @@ SMODS.Joker {
             discards = 2
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     cost = 5,
     loc_vars = function(self, info_queue, card)
@@ -70,4 +70,16 @@ SMODS.Joker {
             }))
         end
     end
+}
+
+SMODS.JimboQuip {
+    key = 'lq_first_aid_kit',
+    type = 'loss',
+    extra = { center = 'j_mxms_first_aid_kit' }
+}
+
+SMODS.JimboQuip {
+    key = 'wq_first_aid_kit',
+    type = 'win',
+    extra = { center = 'j_mxms_first_aid_kit' }
 }

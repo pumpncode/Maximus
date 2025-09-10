@@ -12,7 +12,6 @@ target = "game.lua"
 pattern = '''G.SPLASH_BACK = Sprite(-30, -6, G.ROOM.T.w+60, G.ROOM.T.h+12, G.ASSET_ATLAS["ui_1"], {x = 2, y = 0})'''
 position = "before"
 payload = '''
-
 if Maximus_config.horoscopes then
     self.mxms_horoscope_W = G.CARD_W*1.1
     self.mxms_horoscope_H = 0.95*G.CARD_H
@@ -24,7 +23,12 @@ if Maximus_config.horoscopes then
         self.mxms_horoscope_H, 
         {card_limit = 1, type = 'joker', highlight_limit = 1}
     )
+
+    if TheFamily then
+        G.mxms_horoscope.states.visible = false
+    end
 end
+
 '''
 match_indent = true
 times = 1
@@ -89,38 +93,43 @@ end
 '''
 match_indent = true
 
+
     # Prevent "USE" button on Horoscopes in deck
 [[patches]]
 [patches.pattern]
 target = "functions/UI_definitions.lua"
-pattern = '''if card.ability.consumeable then'''
+pattern = '''
+end
+if card.ability.consumeable then
+'''
 position = "after"
 payload = '''
-if card.ability.set == "Horoscope" or card.config.center.key == 'c_mxms_ophiucus' then
-    return {
-      n=G.UIT.ROOT, config = {padding = 0, colour = G.C.CLEAR}, nodes={
-        {n=G.UIT.C, config={padding = 0.15, align = 'cl'}, nodes={
-          {n=G.UIT.R, config={align = 'cl'}, nodes={
-            sell
-          }},
-        }},
-    }}
-end
+    if card.ability.set == "Horoscope" or card.config.center.key == 'c_mxms_ophiucus' then
+        return {
+        n=G.UIT.ROOT, config = {padding = 0, colour = G.C.CLEAR}, nodes={
+            {n=G.UIT.C, config={padding = 0.15, align = 'cl'}, nodes={
+            {n=G.UIT.R, config={align = 'cl'}, nodes={
+                sell
+            }},
+            }},
+        }}
+    end
 '''
 match_indent = true
 
-    # Force "SELECT" button on Horoscopes in packs
+
+    # Force "SELECT" button on Ophiucus in packs
 [[patches]]
 [patches.pattern]
 target = "functions/UI_definitions.lua"
-pattern = '''function G.UIDEF.use_and_sell_buttons(card)'''
-position = "after"
+pattern = '''if card.ability.consumeable and card.area == G.pack_cards and booster_obj and booster_obj.select_card and card:selectable_from_pack(booster_obj) then'''
+position = "before"
 payload = '''
-    if (card.area == G.pack_cards and G.pack_cards) and card.ability.consumeable then
-        if G.STATE == G.STATES.SMODS_BOOSTER_OPENED and (SMODS.OPENED_BOOSTER and (SMODS.OPENED_BOOSTER.config.center.kind == 'Horoscope' or card.config.center.key == 'c_mxms_ophiucus')) then
+    if card.ability.consumeable and card.area == G.pack_cards and card.config.center.key == 'c_mxms_ophiucus' then
+        if (card.area == G.pack_cards and G.pack_cards) then
             return {
                 n=G.UIT.ROOT, config = {padding = 0, colour = G.C.CLEAR}, nodes={
-                  {n=G.UIT.R, config={ref_table = card, r = 0.08, padding = 0.1, align = "bm", minw = 0.5*card.T.w - 0.15, maxw = 0.9*card.T.w - 0.15, minh = 0.3*card.T.h, hover = true, shadow = true, colour = G.C.UI.BACKGROUND_INACTIVE, one_press = true, button = 'use_card', func = 'can_pick_card'}, nodes={
+                  {n=G.UIT.R, config={ref_table = card, r = 0.08, padding = 0.1, align = "bm", minw = 0.5*card.T.w - 0.15, maxw = 0.9*card.T.w - 0.15, minh = 0.3*card.T.h, hover = true, shadow = true, colour = G.C.UI.BACKGROUND_INACTIVE, one_press = true, button = 'use_card', func = 'can_select_from_booster'}, nodes={
                     {n=G.UIT.T, config={text = localize('b_select'),colour = G.C.UI.TEXT_LIGHT, scale = 0.45, shadow = true}}
                   }},
               }}
@@ -128,6 +137,29 @@ payload = '''
     end
 '''
 match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = '''=[SMODS _ "src/utils.lua"]'''
+pattern = '''function Card.selectable_from_pack(card, pack)'''
+position = "after"
+payload = '''
+    if card.config.center.key == 'c_mxms_ophiucus' then return 'mxms_horoscope' end
+'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/button_callbacks.lua"
+pattern = '''if card.ability.consumeable and not select_to then'''
+position = "before"
+payload = '''
+if not select_to and card.config.center.key == 'c_mxms_ophiucus' then
+    select_to = booster_obj and card:selectable_from_pack(booster_obj)
+end
+'''
+match_indent = true
+
 
     # Hook into Card:highlight for card alignment
 [[patches]]
@@ -154,39 +186,6 @@ config = {align=
 '''
 match_indent = true
 
-
-
-    # Reset Horoscope effects (create new Horoscope card if zodiac killer challenge)
-[[patches]]
-[patches.pattern]
-target = "functions/state_events.lua"
-pattern = '''
-delay(0.4); ease_ante(1); delay(0.4); check_for_unlock({type = 'ante_up', ante = G.GAME.round_resets.ante + 1})
-'''
-position = "before"
-payload = '''
-reset_horoscopes()
-for i = 1, #G.GAME.tags do
-    G.GAME.tags[i]:apply_to_run({type = 'start_apply_horoscopes', tag = _tag})
-end
-
-if G.GAME.modifiers.mxms_zodiac_killer then
-    G.E_MANAGER:add_event(Event({
-        trigger = 'after',
-        delay = 0.2,
-        func = function()
-            local new_card = create_card('Horoscope', G.mxms_horoscope, nil, nil, nil, nil, nil, 'killer')
-            new_card:add_to_deck()
-            G.mxms_horoscope:emplace(new_card)
-            new_card:juice_up(0.3, 0.4)
-            return true
-        end
-    }))
-end
-
-'''
-match_indent = true
-times = 1
 
     # Apply Aries effect
 [[patches]]
@@ -289,6 +288,21 @@ _type == 'consumeable_usage' and localize('ph_stat_consumable') or
 position = "after"
 payload = '''
 _type == 'horoscope_completions' and (Maximus and (Maximus_config.horoscope and localize('ph_mxms_stat_horoscope') or localize('ph_mxms_stat_horoscope')) or localize('k_none')) or
+'''
+match_indent = true
+times = 1
+
+
+    #Force no undiscovered text on bypass
+[[patches]]
+[patches.pattern]
+target = '''card.lua'''
+pattern = '''
+((self.area ~= G.jokers and self.area ~= G.consumeables and self.area) or not self.area) then
+'''
+position = '''at'''
+payload = '''
+((self.area ~= G.jokers and self.area ~= G.consumeables and self.area ~= G.mxms_horoscope and self.area) or not self.area) then
 '''
 match_indent = true
 times = 1

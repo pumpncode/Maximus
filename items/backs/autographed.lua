@@ -5,10 +5,10 @@ SMODS.Back {
         x = 5,
         y = 0
     },
-    credit = {
-    art = "pinkzigzagoon",
-    code = "theAstra",
-    concept = "pinkzigzagoon"
+    mxms_credits = {
+        art = { "pinkzigzagoon" },
+        code = { "theAstra" },
+        idea = { "pinkzigzagoon" }
     },
     apply = function(self, back)
         local extra_cards = {}
@@ -36,6 +36,6 @@ SMODS.Back {
             end
         end
         G.GAME.starting_params.extra_cards = extra_cards
-        G.GAME.starting_params.all_faces = true
+        G.GAME.starting_params.mxms_all_faces = true
     end
 }

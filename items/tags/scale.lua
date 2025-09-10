@@ -7,13 +7,13 @@ if Maximus_config.horoscopes then
             y = 0
         },
         min_ante = 2,
-        credit = {
-            art = "Maxiss02",
-            code = "theAstra",
-            concept = "Maxiss02"
+        mxms_credits = {
+            art = { "Maxiss02" },
+            code = { "theAstra" },
+            idea = { "Maxiss02" }
         },
         apply = function(self, tag, context)
-            if context.type == 'shop_final_pass' and (G.shop and not G.GAME.shop_free) then
+            if context.type == 'shop_final_pass' then
                 G.GAME.shop_free = true
                 tag:yep("+", Maximus.C.SET.Horoscope, function()
                     SMODS.change_free_rerolls(1)

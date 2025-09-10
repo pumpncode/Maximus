@@ -7,16 +7,25 @@ SMODS.Consumable {
         y = 3
     },
     config = {
-        extra = 'mxms_Black'
+        extra = 'mxms_black'
     },
     cost = 4,
     loc_vars = function(self, info_queue, card)
-        info_queue[#info_queue + 1] = G.P_SEALS['mxms_Black']
+        info_queue[#info_queue + 1] = G.P_SEALS['mxms_black']
+
+        return {
+            vars = {
+                colours = {
+                    G.C.BLACK,
+                    G.C.WHITE
+                }
+            }
+        }
     end,
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "pinkzigzagoon"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "pinkzigzagoon" }
     },
     use = function(self, card, area, copier)
         local conv_card = G.hand.highlighted[1]

@@ -13,10 +13,10 @@ SMODS.Joker {
             copied_key = nil
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     blueprint_compat = true,
     cost = 10,
@@ -72,8 +72,8 @@ SMODS.Joker {
 
         if my_pos > 1 and stg.current_triggers < stg.trigger_limit then
             local other_joker = G.jokers.cards[my_pos - 1]
-            if other_joker.config.center.key ~= stg.copied_key then
-                stg.copied_key = other_joker.config.center.key
+            if other_joker.config.center_key ~= stg.copied_key then
+                stg.copied_key = other_joker.config.center_key
                 stg.trigger_limit = 1
             end
 

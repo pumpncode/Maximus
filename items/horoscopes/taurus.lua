@@ -14,10 +14,10 @@ SMODS.Consumable {
             upgrade = 3
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     cost = 4,
     loc_vars = function(self, info_queue, card)
@@ -39,41 +39,30 @@ SMODS.Consumable {
             end
 
             if stg.times == stg.goal then
-                self:succeed(card)
-            end
-
-            if context.selling_self and G.GAME.modifiers.mxms_zodiac_killer then
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    delay = 0.2,
-                    func = function()
-                        G.STATE = G.STATES.GAME_OVER
-                        if not G.GAME.won and not G.GAME.seeded and not G.GAME.challenge then
-                            G.PROFILES[G.SETTINGS.profile].high_scores.current_streak.amt = 0
-                        end
-                        G:save_settings()
-                        G.FILE_HANDLER.force = true
-                        G.STATE_COMPLETE = false
-                        return true
-                    end
-                }))
+                self:succeed(card, context)
             end
         end
     end,
     in_pool = function(self, args)
         if G.GAME.modifiers.mxms_zodiac_killer then
-            return zodiac_killer_pools["Taurus"]
+            return G.GAME.zodiac_killer_pools["Taurus"]
         end
         return true
     end,
-    succeed = function(self, card)
+    succeed = function(self, card, context)
         local stg = card.ability.extra
         SMODS.calculate_effect(
-        { message = localize('k_mxms_success_ex'), colour = G.C.GREEN, sound = 'tarot1', func = function()
-            set_horoscope_success(card)
-            check_for_unlock({ type = "all_horoscopes" })
-        end }, card)
-        level_up_hand(card, stg.hand_type, false, stg.upgrade)
+            {
+                message = localize('k_mxms_success_ex'),
+                colour = G.C.GREEN,
+                sound = 'tarot1',
+                func = function()
+                    Maximus.set_horoscope_success(card)
+                    check_for_unlock({ type = "all_horoscopes" })
+                    if TheFamily then G.GAME.horoscope_alert = true end
+                end
+            }, card)
+        SMODS.smart_level_up_hand(card, stg.hand_type, false, stg.upgrade)
         G.E_MANAGER:add_event(Event({
             trigger = 'after',
             func = function()
@@ -81,12 +70,18 @@ SMODS.Consumable {
                 return true
             end
         }))
-        zodiac_killer_pools["Taurus"] = false
+        G.GAME.zodiac_killer_pools["Taurus"] = false
         SMODS.calculate_context({ mxms_beat_horoscope = true })
     end,
     fail = function(self, card)
         local stg = card.ability.extra
-        SMODS.calculate_effect({ message = localize('k_mxms_failed_ex'), colour = G.C.RED, sound = 'tarot2' }, card)
+        SMODS.calculate_effect(
+            {
+                message = localize('k_mxms_failed_ex'),
+                colour = G.C.RED,
+                sound = 'tarot2',
+                func = function() if TheFamily then G.GAME.horoscope_alert = true end end
+            }, card)
         if not next(SMODS.find_card('j_mxms_cheat_day')) then
             G.E_MANAGER:add_event(Event({
                 trigger = 'after',
@@ -97,22 +92,6 @@ SMODS.Consumable {
             }))
         else
             stg.times = 0
-        end
-        if G.GAME.modifiers.mxms_zodiac_killer then
-            G.E_MANAGER:add_event(Event({
-                trigger = 'after',
-                delay = 0.2,
-                func = function()
-                    G.STATE = G.STATES.GAME_OVER
-                    if not G.GAME.won and not G.GAME.seeded and not G.GAME.challenge then
-                        G.PROFILES[G.SETTINGS.profile].high_scores.current_streak.amt = 0
-                    end
-                    G:save_settings()
-                    G.FILE_HANDLER.force = true
-                    G.STATE_COMPLETE = false
-                    return true
-                end
-            }))
         end
         SMODS.calculate_context({ mxms_failed_horoscope = true })
     end

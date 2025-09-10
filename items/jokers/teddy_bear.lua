@@ -6,16 +6,14 @@ SMODS.Joker {
         y = 14
     },
     rarity = 1,
-    credit = {
-        art = "pinkzigzagoon",
-        code = "theAstra",
-        concept = "pinkzigzagoon"
+    mxms_credits = {
+        art = { "pinkzigzagoon" },
+        code = { "theAstra" },
+        idea = { "pinkzigzagoon" }
     },
     blueprint_compat = true,
     cost = 4,
     calculate = function(self, card, context)
-        local stg = card.ability.extra
-
         if context.before and G.GAME.current_round.hands_left == 0
             and #G.consumeables.cards + G.GAME.consumeable_buffer < G.consumeables.config.card_limit then
             G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1

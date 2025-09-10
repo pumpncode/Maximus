@@ -8,13 +8,14 @@ SMODS.Joker {
     rarity = 2,
     config = {
         extra = {
-            cards_left = 50
+            cards_left = 50,
+            card_decrement = 1
         }
     },
-    credit = {
-        art = "pinkzigzagoon",
-        code = "theAstra",
-        concept = "pinkzigzagoon"
+    mxms_credits = {
+        art = { "pinkzigzagoon" },
+        code = { "theAstra" },
+        idea = { "pinkzigzagoon" }
     },
     blueprint_compat = true,
     cost = 4,
@@ -26,7 +27,7 @@ SMODS.Joker {
         return {
             vars = {
                 stg.cards_left,
-                G.GAME.current_round.mxms_jello_suit,
+                localize(G.GAME.current_round.mxms_jello_suit, 'suits_singular'),
                 colours = { G.C.SUITS[G.GAME.current_round.mxms_jello_suit] }
             }
         }
@@ -35,7 +36,13 @@ SMODS.Joker {
         local stg = card.ability.extra
         if context.cardarea == G.play and context.repetition and stg.cards_left > 0 then
             if context.other_card:is_suit(G.GAME.current_round.mxms_jello_suit) then
-                stg.cards_left = stg.cards_left - (1 / G.GAME.mxms_fridge_mod)
+                SMODS.scale_card(card, {
+                    ref_table = stg,
+                    ref_value = "cards_left",
+                    scalar_value = "card_decrement",
+                    operation = "-",
+                    no_message = true
+                })
                 return {
                     repetitions = 1,
                     message = localize('k_again_ex'),

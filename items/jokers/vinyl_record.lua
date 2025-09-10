@@ -15,13 +15,14 @@ SMODS.Joker {
             chips = 150
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "theAstra"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "theAstra" }
     },
     blueprint_compat = true,
     cost = 4,
+    pixel_size = { h = 71 },
     loc_vars = function(self, info_queue, card)
         local stg = card.ability.extra
 
@@ -30,11 +31,11 @@ SMODS.Joker {
         local colour
         if stg.side == 'a_side' then
             value = stg.mult
-            text = 'Mult'
+            text = localize('k_mult')
             colour = G.C.MULT
         else
             value = stg.chips
-            text = 'Chips'
+            text = localize('k_mxms_chips')
             colour = G.C.CHIPS
         end
 
@@ -104,25 +105,5 @@ SMODS.Joker {
                 }))
             end
         end
-    end,
-    set_ability = function(self, card, inital, delay_sprites)
-        if card.config.center.discovered or card.bypass_discovery_center then
-            local W, H = card.T.w, card.T.h
-            H = W
-            card.T.h = H
-            card.T.w = W
-        end
-    end,
-    set_sprites = function(self, card, front)
-        if card.config.center.discovered or card.bypass_discovery_center then
-            card.children.center.scale.y = card.children.center.scale.x
-        end
-    end,
-    load = function(self, card, card_table, other_card)
-        local W, H, scale = card.T.w, card.T.h, 1
-
-        H = W
-        card.T.h = H * scale
-        card.T.w = W * scale
     end
 }

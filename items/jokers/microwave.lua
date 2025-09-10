@@ -5,10 +5,10 @@ SMODS.Joker {
         x = 4,
         y = 0
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     rarity = 2,
     blueprint_compat = true,
@@ -17,7 +17,7 @@ SMODS.Joker {
     calculate = function(self, card, context)
         -- Thank you to theonegoodali from the Balatro Discord for helping me with this conditional
         if context.retrigger_joker_check and not context.retrigger_joker and context.other_card.ability then
-            if mxms_is_food(context.other_card) and context.other_card.config.center.key ~= "j_mxms_leftovers" then
+            if Maximus.is_food(context.other_card) and context.other_card.config.center_key ~= "j_mxms_leftovers" then
                 return {
                     message = localize('k_again_ex'),
                     repetitions = 1,
@@ -26,4 +26,10 @@ SMODS.Joker {
             end
         end
     end
+}
+
+SMODS.JimboQuip {
+    key = 'wq_microwave',
+    type = 'win',
+    extra = { center = 'j_mxms_microwave' }
 }

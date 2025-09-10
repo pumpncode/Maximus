@@ -9,13 +9,13 @@ SMODS.Joker {
     config = {
         extra = {
             consumables = 0,
-            goal = 6
+            goal = 5
         }
     },
-    credit = {
+    mxms_credits = {
         art = "Maxiss02",
         code = "theAstra",
-        concept = "pinkzigzagoon"
+        idea = "pinkzigzagoon"
     },
     blueprint_compat = true,
     unlocked = false,

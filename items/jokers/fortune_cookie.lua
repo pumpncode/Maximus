@@ -19,73 +19,61 @@ SMODS.Joker {
             odds = 10
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     loc_vars = function(self, info_queue, card)
         local stg = card.ability.extra
+        local prob, odds = SMODS.get_probability_vars(card, stg.prob, stg.odds, 'fco')
         return {
-            vars = { G.GAME.probabilities.normal, stg.prob * G.GAME.mxms_fridge_mod,
-                stg.prob * G.GAME.mxms_fridge_mod * G.GAME.probabilities.normal,
-                stg.odds * G.GAME.mxms_fridge_mod }
+            vars = { prob, odds, G.GAME.probabilities.normal }
         }
     end,
     calculate = function(self, card, context)
         local stg = card.ability.extra
-        -- Activate ability before scoring if chance is higher than 0
-        if context.before and stg.prob > 0 then
-            -- Roll chance and decrease by 1
-            local chance_roll = pseudorandom(pseudoseed('fco' .. G.GAME.round_resets.ante)) < (stg.prob * G.GAME.probabilities.normal) / stg.odds
-            stg.prob = stg.prob - (1 / G.GAME.mxms_fridge_mod)
+        -- Activate ability before scoring if chance is higher than 0 and if consumables area has space
+        if context.before and stg.prob > 0
+            and #G.consumeables.cards + G.GAME.consumeable_buffer < G.consumeables.config.card_limit then
+            if SMODS.pseudorandom_probability(card, 'fco', stg.prob, stg.odds) then
+                SMODS.scale_card(card, {
+                ref_table = stg,
+                ref_value = "prob",
+                scalar_table = G.GAME.probabilities,
+                scalar_value = "normal",
+                operation = "-",
+                no_message = true
+            })
 
-            -- Check if Consumables is full
-            if #G.consumeables.cards + G.GAME.consumeable_buffer < G.consumeables.config.card_limit then
-                -- Successful roll
-                if (chance_roll) then
-                    G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
-                    G.E_MANAGER:add_event(Event({
-                        trigger = 'before',
-                        func = function()
-                            (context.blueprint_card or card):juice_up(0.3, 0.4)
+                G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
 
-                            SMODS.add_card({
-                                set = 'Tarot',
-                                key_append = 'fco'
-                            })
-                            G.GAME.consumeable_buffer = G.GAME.consumeable_buffer - 1
-                            return true;
-                        end
-                    }))
-                    return {
-                        sound = 'tarot1',
-                        message = localize('k_mxms_fortunate_ex'),
-                        colour = G.C.SECONDARY_SET.Tarot
-                    }
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'before',
+                    func = function()
+                        (context.blueprint_card or card):juice_up(0.3, 0.4)
 
-                    -- Failed Roll
-                else
-                    SMODS.calculate_context({ mxms_failed_prob = true, odds = stg.odds - stg.prob * G.GAME.mxms_fridge_mod * G.GAME.probabilities.normal, card = card })
-                    return {
-                        sound = 'tarot2',
-                        message = localize('k_nope_ex'),
-                        colour = G.C.SET.Tarot
-                    }
-                end
-            else
+                        SMODS.add_card({
+                            set = 'Tarot',
+                            key_append = 'fco'
+                        })
+                        G.GAME.consumeable_buffer = G.GAME.consumeable_buffer - 1
+                        return true;
+                    end
+                }))
+
+                return {
+                    sound = 'tarot1',
+                    message = localize('k_mxms_fortunate_ex'),
+                    colour = G.C.SECONDARY_SET.Tarot
+                }
+            else -- Failed Roll
                 return {
                     sound = 'tarot2',
-                    message = localize('k_mxms_wasted'),
-                    colour = G.C.SET.Tarot
+                    message = localize('k_nope_ex'),
+                    colour = G.C.FILTER
                 }
             end
-
-            return {
-                card = card,
-                message = '-1',
-                colour = G.C.RED
-            }
         end
 
         -- "Crumble" card after scoring
@@ -120,4 +108,16 @@ SMODS.Joker {
             end
         end
     end
+}
+
+SMODS.JimboQuip {
+    key = 'lq_fortune_cookie',
+    type = 'loss',
+    extra = { center = 'j_mxms_fortune_cookie' }
+}
+
+SMODS.JimboQuip {
+    key = 'wq_fortune_cookie',
+    type = 'win',
+    extra = { center = 'j_mxms_fortune_cookie' }
 }

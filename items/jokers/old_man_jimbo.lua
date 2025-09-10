@@ -11,10 +11,10 @@ SMODS.Joker {
             gain = 0.5
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     blueprint_compat = true,
     cost = 6,
@@ -30,4 +30,20 @@ SMODS.Joker {
             }
         end
     end
+}
+
+SMODS.JimboQuip {
+    key = 'lq_old_man_jimbo',
+    type = 'loss',
+    extra = {
+        center = 'j_mxms_old_man_jimbo',
+        times = 30,
+        delay = 0.2
+    }
+}
+
+SMODS.JimboQuip {
+    key = 'wq_old_man_jimbo',
+    type = 'win',
+    extra = { center = 'j_mxms_old_man_jimbo' }
 }

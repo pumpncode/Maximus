@@ -27,10 +27,10 @@ SMODS.Consumable {
             upgrade = 2
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     cost = 4,
     loc_vars = function(self, info_queue, card)
@@ -52,27 +52,10 @@ SMODS.Consumable {
                 self:succeed(card, context)
             end
         end
-
-        if context.selling_self and G.GAME.modifiers.mxms_zodiac_killer then
-            G.E_MANAGER:add_event(Event({
-                trigger = 'after',
-                delay = 0.2,
-                func = function()
-                    G.STATE = G.STATES.GAME_OVER
-                    if not G.GAME.won and not G.GAME.seeded and not G.GAME.challenge then
-                        G.PROFILES[G.SETTINGS.profile].high_scores.current_streak.amt = 0
-                    end
-                    G:save_settings()
-                    G.FILE_HANDLER.force = true
-                    G.STATE_COMPLETE = false
-                    return true
-                end
-            }))
-        end
     end,
     in_pool = function(self, args)
         if G.GAME.modifiers.mxms_zodiac_killer then
-            return zodiac_killer_pools["Gemini"]
+            return G.GAME.zodiac_killer_pools["Gemini"]
         end
         return true
     end,
@@ -84,40 +67,15 @@ SMODS.Consumable {
                 colour = G.C.GREEN,
                 sound = 'tarot1',
                 func = function()
-                    set_horoscope_success(card)
+                    Maximus.set_horoscope_success(card)
                     check_for_unlock({ type = "all_horoscopes" })
+                    if TheFamily then G.GAME.horoscope_alert = true end
                 end
             }, card)
         for k, v in pairs(card.ability.hands) do
             if v then
-                update_hand_text({ sound = 'button', volume = 0.7, pitch = 0.8, delay = 0.3 },
-                    {
-                        handname = k,
-                        chips = G.GAME.hands[k].chips,
-                        mult = G.GAME.hands[k].mult,
-                        level = G.GAME.hands[k]
-                            .level
-                    })
-                level_up_hand(card, k, false, stg.upgrade)
+                SMODS.smart_level_up_hand(card, k, false, stg.upgrade)
             end
-        end
-        if context then
-            update_hand_text({ sound = 'button', volume = 0.7, pitch = 0.8, delay = 0.3 },
-                {
-                    handname = context.scoring_name,
-                    chips = G.GAME.hands[context.scoring_name].chips,
-                    mult = G.GAME.hands
-                        [context.scoring_name].mult,
-                    level = G.GAME.hands[context.scoring_name].level
-                })
-        else
-            update_hand_text({ sound = 'button', volume = 0.7, pitch = 0.8, delay = 0.3 },
-                {
-                    handname = '',
-                    chips = 0,
-                    mult = 0,
-                    level = ''
-                })
         end
         G.E_MANAGER:add_event(Event({
             func = function()
@@ -125,12 +83,18 @@ SMODS.Consumable {
                 return true
             end
         }))
-        zodiac_killer_pools["Gemini"] = false
+        G.GAME.zodiac_killer_pools["Gemini"] = false
         SMODS.calculate_context({ mxms_beat_horoscope = true })
     end,
     fail = function(self, card)
         local stg = card.ability.extra
-        SMODS.calculate_effect({ message = localize('k_mxms_failed_ex'), colour = G.C.RED, sound = 'tarot2' }, card)
+        SMODS.calculate_effect(
+            {
+                message = localize('k_mxms_failed_ex'),
+                colour = G.C.RED,
+                sound = 'tarot2',
+                func = function() if TheFamily then G.GAME.horoscope_alert = true end end
+            }, card)
         if not next(SMODS.find_card('j_mxms_cheat_day')) then
             G.E_MANAGER:add_event(Event({
                 trigger = 'after',
@@ -156,22 +120,6 @@ SMODS.Consumable {
                 ["High Card"] = false,
 
             }
-        end
-        if G.GAME.modifiers.mxms_zodiac_killer then
-            G.E_MANAGER:add_event(Event({
-                trigger = 'after',
-                delay = 0.2,
-                func = function()
-                    G.STATE = G.STATES.GAME_OVER
-                    if not G.GAME.won and not G.GAME.seeded and not G.GAME.challenge then
-                        G.PROFILES[G.SETTINGS.profile].high_scores.current_streak.amt = 0
-                    end
-                    G:save_settings()
-                    G.FILE_HANDLER.force = true
-                    G.STATE_COMPLETE = false
-                    return true
-                end
-            }))
         end
         SMODS.calculate_context({ mxms_failed_horoscope = true })
     end

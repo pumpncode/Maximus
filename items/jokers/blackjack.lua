@@ -9,14 +9,14 @@ SMODS.Joker {
     config = {
         extra = {
             Xmult = 1,
-            gain_norm = 0.25,
+            gain_norm = 0.1,
             gain_best = 1
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "anerdymous"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "anerdymous" }
     },
     blueprint_compat = true,
     cost = 5,
@@ -52,16 +52,21 @@ SMODS.Joker {
                     colour = G.C.RED
                 }
             elseif hand_value == 21 then
-                stg.Xmult = stg.Xmult + stg.gain_best
-                return {
-                    message = localize('k_mxms_blackjack_ex'),
-                    colour = G.C.GREEN
-                }
+                SMODS.scale_card(card, {
+                    ref_table = stg,
+                    ref_value = "Xmult",
+                    scalar_value = "gain_best",
+                    message_key = "k_mxms_blackjack_ex",
+                    message_colour = G.C.GREEN
+                })
+                return nil, true
             else
-                stg.Xmult = stg.Xmult + stg.gain_norm
-                return {
-                    message = localize('k_upgrade_ex')
-                }
+                SMODS.scale_card(card, {
+                    ref_table = stg,
+                    ref_value = "Xmult",
+                    scalar_value = "gain_norm",
+                })
+                return nil, true
             end
         end
 

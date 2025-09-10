@@ -12,10 +12,10 @@ SMODS.Joker {
             Xmult = 1
         }
     },
-    credit = {
-        art = "anerdymous",
-        code = "theAstra",
-        concept = "anerdymous"
+    mxms_credits = {
+        art = { "anerdymous" },
+        code = { "theAstra" },
+        idea = { "anerdymous" }
     },
     blueprint_compat = true,
     cost = 8,
@@ -28,28 +28,26 @@ SMODS.Joker {
     calculate = function(self, card, context)
         local stg = card.ability.extra
 
-        if context.after and context.scoring_name == 'High Card' and not context.blueprint then
-            local destroyed_cards = {}
-            for k, v in pairs(context.scoring_hand) do
-                stg.Xmult = stg.Xmult + stg.gain * G.GAME.mxms_soil_mod
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after',
-                    func = function()
-                        destroyed_cards[#destroyed_cards+1] = v
-                        v:start_dissolve()
-                        G.E_MANAGER:add_event(Event({
-                            func = function()
-                                v:remove()
-                                v = nil
-                                return true;
-                            end
-                        }))
-                        return true;
-                    end
-                }))
-                SMODS.calculate_effect({ message = localize('k_mxms_sacrifice_ex') }, card)
-            end
-            SMODS.calculate_context({remove_playing_card = true, removed = destroyed_cards})
+        if context.destroy_card and context.scoring_name == 'High Card' and context.cardarea == G.play and not context.blueprint then
+            SMODS.scale_card(card, {
+                ref_table = stg,
+                ref_value = "Xmult",
+                scalar_value = "gain",
+                no_message = true
+            })
+            local current_card = context.destroy_card
+            G.E_MANAGER:add_event(Event({
+                func = function()
+                    current_card:juice_up()
+                    current_card.debuff = true
+                    return true;
+                end
+            }))
+            return {
+                remove = true,
+                message = localize('k_mxms_sacrifice_ex'),
+                colour = G.C.RED
+            }
         end
 
         if context.joker_main then

@@ -12,10 +12,11 @@ SMODS.Joker {
             mult = 0
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "anerdymous"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "anerdymous" },
+        reference = { "Wheel of Fortune" }
     },
     blueprint_compat = true,
     cost = 4,
@@ -29,12 +30,14 @@ SMODS.Joker {
     calculate = function(self, card, context)
         local stg = card.ability.extra
 
-        if context.mxms_failed_prob and context.card.config.center.key == 'c_wheel_of_fortune' and not context.blueprint then
-            stg.mult = stg.mult + stg.gain * G.GAME.mxms_soil_mod
-            return {
-                message = localize { type = 'variable', key = 'a_mult', vars = { stg.mult } },
-                func = function() SMODS.calculate_context({ mxms_scaling_card = true }) end
-            }
+        if context.pseudorandom_result and not context.result and context.identifier == 'wheel_of_fortune' and not context.blueprint then
+            SMODS.scale_card(card, {
+                ref_table = stg,
+                ref_value = "mult",
+                scalar_value = "gain",
+                message_key = "a_mult"
+            })
+            return nil, true
         end
 
         if context.joker_main then

@@ -11,10 +11,10 @@ SMODS.Joker {
             Xmult = 6
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        concept = { "Maxiss02" }
     },
     blueprint_compat = true,
     unlocked = false,
@@ -39,4 +39,19 @@ SMODS.Joker {
     check_for_unlock = function(self, args)
         return next(SMODS.find_card('j_mxms_crowned'))
     end
+}
+
+SMODS.JimboQuip {
+    key = 'lq_crowned',
+    type = 'loss',
+    extra = {
+        center = 'j_mxms_crowned',
+        times = 1
+    }
+}
+
+SMODS.JimboQuip {
+    key = 'wq_crowned',
+    type = 'win',
+    extra = { center = 'j_mxms_crowned' }
 }

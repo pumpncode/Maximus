@@ -5,16 +5,26 @@ SMODS.Joker {
         x = 5,
         y = 17
     },
-    credit = {
-        art = "anerdymous",
-        code = "theAstra",
-        concept = "anerdymous"
+    mxms_credits = {
+        art = { "anerdymous" },
+        code = { "theAstra" },
+        idea = { "anerdymous" }
     },
     rarity = 2,
     blueprint_compat = false,
     cost = 6,
     loc_vars = function(self, info_queue, card)
-        local stg = card.ability.extra
         info_queue[#info_queue + 1] = G.P_CENTERS.m_wild
+    end,
+    calculate = function(self, card, context)
+        local stg = card.ability.extra
+
+        if context.discard_from_play and SMODS.has_enhancement(context.card, 'm_wild') then
+            return {
+                cardarea = 'deck',
+                message = localize('k_saved_ex'),
+                sound = 'mxms_joker'
+            }
+        end
     end
 }

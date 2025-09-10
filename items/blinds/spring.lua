@@ -14,12 +14,15 @@ SMODS.Blind {
             hands_removed = 0
         }
     },
-    credit = {
-        art = "pinkzigzagoon",
-        code = "theAstra",
-        concept = "pinkzigzagoon"
+    mxms_credits = {
+        art = { "pinkzigzagoon" },
+        code = { "theAstra" },
+        idea = { "pinkzigzagoon" }
     },
     boss_colour = HEX('BDB087'),
+    set_blind = function(self)
+        self.config.extra.hands_removed = 0
+    end,
     after_scoring = function(self)
         G.E_MANAGER:add_event(Event({
             func = function()
@@ -33,6 +36,7 @@ SMODS.Blind {
     end,
     disable = function(self)
         G.hand:change_size(self.config.extra.hands_removed)
+        G.FUNCS.draw_from_deck_to_hand(self.config.extra.hands_removed)
     end,
     defeat = function(self)
         if not G.GAME.blind.disabled then

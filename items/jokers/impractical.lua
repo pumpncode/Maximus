@@ -13,17 +13,17 @@ SMODS.Joker {
             fails = 0
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     blueprint_compat = true,
     cost = 6,
     loc_vars = function(self, info_queue, card)
         local stg = card.ability.extra
         return {
-            vars = { stg.fails, stg.Xmult, stg.fail_Xmult, G.localization.misc.poker_hands[G.GAME.current_round.mxms_impractical_hand] }
+            vars = { stg.fails, stg.Xmult, stg.fail_Xmult, localize(G.GAME.current_round.mxms_impractical_hand, 'poker_hands') }
         }
     end,
     calculate = function(self, card, context)
@@ -56,7 +56,7 @@ SMODS.Joker {
                     -- If 3 fails
                 elseif stg.fails == 3 then
                     return {
-                        message = 'Tonight\'s Biggest Loser',
+                        message = 'Tonight\'s Biggest lossr',
                         Xmult_mod = stg.fail_Xmult,
                         colour = G.C.RED,
                         card = card
@@ -74,4 +74,10 @@ SMODS.Joker {
             }
         end
     end
+}
+
+SMODS.JimboQuip {
+    key = 'lq_impractical_joker',
+    type = 'loss',
+    extra = { center = 'j_mxms_impractical_joker' }
 }

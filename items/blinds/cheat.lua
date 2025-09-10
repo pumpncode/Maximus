@@ -9,10 +9,10 @@ SMODS.Blind {
         x = 0,
         y = 5
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "theAstra"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "theAstra" }
     },
     boss_colour = HEX('4E4C76'),
     recalc_debuff = function(self, card, from_blind)
@@ -42,5 +42,12 @@ SMODS.Blind {
             end
         end
         self.triggered = false
+    end,
+    in_pool = function(self, args)
+        if not (G.GAME.bosses_used['bl_mxms_rule'] > 0) and self.boss.min <= math.max(1, G.GAME.round_resets.ante) then
+            return true
+        end
+
+        return false
     end
 }

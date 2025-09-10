@@ -13,23 +13,24 @@ SMODS.Joker {
             mult = 1
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     blueprint_compat = true,
     cost = 5,
     loc_vars = function(self, info_queue, card)
         local stg = card.ability.extra
+        local prob, odds = SMODS.get_probability_vars(card, stg.prob, stg.odds, 'rand_enc')
         return {
-            vars = { stg.prob * G.GAME.probabilities.normal, stg.odds, stg.mult }
+            vars = { prob, odds, stg.mult }
         }
     end,
     calculate = function(self, card, context)
         local stg = card.ability.extra
         if context.individual and context.cardarea == G.play then
-            if pseudorandom(pseudoseed('rand_enc' .. G.GAME.round_resets.ante)) < stg.prob * G.GAME.probabilities.normal / stg.odds then
+            if SMODS.pseudorandom_probability(card, 'rand_enc', stg.prob, stg.odds) then
                 context.other_card.ability.perma_mult = context.other_card.ability.perma_mult or 0
                 context.other_card.ability.perma_mult = context.other_card.ability.perma_mult + stg.mult
                 return {
@@ -37,10 +38,13 @@ SMODS.Joker {
                     colour = G.C.MULT,
                     card = card
                 }
-            else
-                SMODS.calculate_context({ mxms_failed_prob = true, odds = stg.odds - (stg.prob * G.GAME.probabilities.normal), card =
-                context.blueprint_card or card })
             end
         end
     end
+}
+
+SMODS.JimboQuip {
+    key = 'wq_random_encounter',
+    type = 'win',
+    extra = { center = 'j_mxms_random_encounter' }
 }

@@ -5,20 +5,15 @@ SMODS.Joker {
         x = 2,
         y = 12
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "theAstra"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "theAstra" }
     },
     rarity = 1,
     blueprint_compat = false,
     cost = 4,
-    loc_vars = function(self, info_queue, card)
-        local stg = card.ability.extra
-    end,
     calculate = function(self, card, context)
-        local stg = card.ability.extra
-
         if context.selling_self and not context.blueprint then
             local valid_jokers = SMODS.Edition:get_edition_cards(G.jokers, false)
 
@@ -50,4 +45,10 @@ SMODS.Joker {
     in_pool = function(self, args)
         return next(SMODS.Edition:get_edition_cards(G.jokers, false))
     end
+}
+
+SMODS.JimboQuip {
+    key = 'lq_cleaner',
+    type = 'loss',
+    extra = { center = 'j_mxms_cleaner' }
 }

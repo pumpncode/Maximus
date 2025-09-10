@@ -11,10 +11,10 @@ SMODS.Joker {
             slots = 1
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     blueprint_compat = false,
     cost = 6,
@@ -33,4 +33,10 @@ SMODS.Joker {
         local stg = card.ability.extra
         change_shop_size(-stg.slots)
     end
+}
+
+SMODS.JimboQuip {
+    key = 'lq_sleuth',
+    type = 'loss',
+    extra = { center = 'j_mxms_sleuth' }
 }

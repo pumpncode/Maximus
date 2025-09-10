@@ -5,10 +5,10 @@ SMODS.Joker {
         x = 1,
         y = 2
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     blueprint_compat = false,
     eternal_compat = false,
@@ -24,8 +24,8 @@ local remove_ref = Card.remove
 function Card.remove(self)
     if self.added_to_deck and self.ability.set == 'Joker' and not G.CONTROLLER.locks.selling_card and self.config.center_key ~= 'j_mxms_leftovers' then
         local first_leftovers = SMODS.find_card('j_mxms_leftovers')[1]
-        if first_leftovers and mxms_is_food(self) then
-            local respawn_key = self.config.center.key
+        if first_leftovers and Maximus.is_food(self) then
+            local respawn_key = self.config.center_key
 
             play_sound('timpani')
 
@@ -59,3 +59,9 @@ function Card.remove(self)
     end
     return remove_ref(self)
 end
+
+SMODS.JimboQuip {
+    key = 'lq_leftovers',
+    type = 'loss',
+    extra = { center = 'j_mxms_leftovers' }
+}

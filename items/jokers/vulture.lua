@@ -6,16 +6,15 @@ SMODS.Joker {
         x = 5,
         y = 11
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     rarity = 3,
     blueprint_compat = false,
     cost = 7,
     calculate = function(self, card, context)
-        local stg = card.ability.extra
         if context.remove_playing_cards and not context.blueprint then
             for k, v in pairs(context.removed) do
                 if v.seal then
@@ -23,7 +22,7 @@ SMODS.Joker {
                         func = function()
                             local eligible_jokers = {}
                             for kk, vv in pairs(G.jokers.cards) do
-                                if not vv.seal and not vv.config.marked_for_seal and vv.config.center.key ~= 'j_mxms_vulture' then
+                                if not vv.seal and not vv.config.marked_for_seal and vv.config.center_key ~= 'j_mxms_vulture' then
                                     eligible_jokers[#eligible_jokers + 1] = vv
                                 end
                             end

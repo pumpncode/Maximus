@@ -5,16 +5,15 @@ SMODS.Joker {
         x = 5,
         y = 3
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     rarity = 2,
     blueprint_compat = false,
     cost = 5,
     calculate = function(self, card, context)
-        local stg = card.ability.extra
         if context.before and not context.blueprint and #context.scoring_hand == 4 then
             -- Code derived from Sigil
             for i = 1, #context.scoring_hand do

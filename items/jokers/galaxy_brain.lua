@@ -13,39 +13,39 @@ SMODS.Joker {
             last_hand = nil
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "pinkzigzagoon"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "pinkzigzagoon" }
     },
     blueprint_compat = true,
     cost = 6,
     loc_vars = function(self, info_queue, card)
         local stg = card.ability.extra
         return {
-            vars = { stg.Xmult, stg.gain, stg.last_hand and G.localization.misc.poker_hands[stg.last_hand] or 'None' }
+            vars = { stg.Xmult, stg.gain, stg.last_hand and localize(stg.last_hand, 'poker_hands') or localize('k_none') }
         }
     end,
     calculate = function(self, card, context)
         local stg = card.ability.extra
 
         if context.before and not context.blueprint then
-            for k, v in pairs(G.GAME.hands) do
-                if k == stg.last_hand then
-                    stg.last_hand = k
-                    stg.Xmult = 1
-                    return {
-                        message = localize('k_reset'),
-                        colour = G.C.FILTER
-                    }
-                elseif k == context.scoring_name then
-                    stg.last_hand = k
-                    stg.Xmult = stg.Xmult + stg.gain * G.GAME.mxms_soil_mod
-                    return {
-                        message = localize('k_upgrade_ex'),
-                        func = function() SMODS.calculate_context({ mxms_scaling_card = true }) end
-                    }
-                end
+            if SMODS.PokerHands[context.scoring_name].chips * SMODS.PokerHands[context.scoring_name].mult >
+                SMODS.PokerHands[stg.last_hand].chips * SMODS.PokerHands[stg.last_hand].mult then
+                stg.last_hand = context.scoring_name
+                SMODS.scale_card(card, {
+                    ref_table = stg,
+                    ref_value = "Xmult",
+                    scalar_value = "gain"
+                })
+                return nil, true
+            else
+                stg.last_hand = context.scoring_name
+                stg.Xmult = 1
+                return {
+                    message = localize('k_reset'),
+                    colour = G.C.FILTER
+                }
             end
         end
 
@@ -60,4 +60,10 @@ SMODS.Joker {
 
         stg.last_hand = G.GAME.last_hand_played or 'None'
     end
+}
+
+SMODS.JimboQuip {
+    key = 'wq_galaxy_brain',
+    type = 'win',
+    extra = { center = 'j_mxms_galaxy_brain' }
 }

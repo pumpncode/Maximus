@@ -11,10 +11,10 @@ SMODS.Joker {
             size = 3
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "anerdymous"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "anerdymous" }
     },
     blueprint_compat = false,
     cost = 4,
@@ -32,5 +32,26 @@ SMODS.Joker {
         local stg = card.ability.extra
 
         G.hand:change_size(-stg.size)
-    end
+    end,
+    calculate = function(self, card, context)
+        local stg = card.ability.extra
+
+        if context.draw_individual and context.num_drawn <= stg.size and not context.to_booster then
+            return {
+                stay_flipped = true
+            }
+        end
+    end,
+}
+
+SMODS.JimboQuip {
+    key = 'lq_detective',
+    type = 'loss',
+    extra = { center = 'j_mxms_detective' }
+}
+
+SMODS.JimboQuip {
+    key = 'wq_detective',
+    type = 'win',
+    extra = { center = 'j_mxms_detective' }
 }

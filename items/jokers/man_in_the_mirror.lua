@@ -9,10 +9,10 @@ SMODS.Joker { -- Man in the Mirror
     eternal_compat = false,
     cost = 8,
     rarity = 2,
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     loc_vars = function(self, info_queue, card)
         info_queue[#info_queue + 1] = G.P_CENTERS.e_negative
@@ -23,11 +23,8 @@ SMODS.Joker { -- Man in the Mirror
             -- Fail if no held consumeables
             if next(G.consumeables.cards) == nil then
                 return {
-                    extra = {
-                        message = localize('k_mxms_no_target_el'),
-                        colour = G.C.PURPLE
-                    },
-                    card = card
+                    message = localize('k_mxms_no_target_el'),
+                    colour = G.C.PURPLE
                 }
             else
                 -- Add negative edition to all held consumeables

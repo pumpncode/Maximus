@@ -11,10 +11,10 @@ SMODS.Joker {
             money = 20,
         }
     },
-    credit = {
-        art = "pinkzigzagoon",
-        code = "theAstra",
-        concept = "pinkzigzagoon"
+    mxms_credits = {
+        art = { "pinkzigzagoon" },
+        code = { "theAstra" },
+        idea = { "pinkzigzagoon" }
     },
     blueprint_compat = false,
     cost = 6,
@@ -32,7 +32,7 @@ SMODS.Joker {
 local ccsc = Card.can_sell_card
 Card.can_sell_card = function(self, context)
     local ret = ccsc(self, context)
-    if self.config.center.key == 'j_mxms_severed_floor' and G.STATE == G.STATES.ROUND_EVAL then
+    if self.config.center_key == 'j_mxms_severed_floor' and G.STATE == G.STATES.ROUND_EVAL then
         ret = false
     end
     return ret

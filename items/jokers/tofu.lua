@@ -8,13 +8,14 @@ SMODS.Joker {
     rarity = 2,
     config = {
         extra = {
-            triggers_left = 5,
+            hands_left = 5,
+            hand_decrement = 1
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     blueprint_compat = true,
     cost = 7,
@@ -26,7 +27,7 @@ SMODS.Joker {
         card.ability.blueprint_compat_ui = card.ability.blueprint_compat_ui or ''
         card.ability.blueprint_compat_check = nil
         return {
-            vars = { stg.triggers_left },
+            vars = { stg.hands_left },
             main_end = (card.area and card.area == G.jokers) and {
                 {
                     n = G.UIT.C,
@@ -62,17 +63,8 @@ SMODS.Joker {
     calculate = function(self, card, context)
         local stg = card.ability.extra
 
-        local my_pos = 0
-
-        for i = 1, #G.jokers.cards do
-            if G.jokers.cards[i] == card then
-                my_pos = i
-                break
-            end
-        end
-
-        if my_pos < #G.jokers.cards and stg.triggers_left > 0 then
-            local other_joker = G.jokers.cards[my_pos + 1]
+        if stg.hands_left > 0 then
+            local other_joker = G.jokers.cards[#G.jokers.cards]
 
             if other_joker and other_joker ~= card and not context.no_blueprint then
                 context.blueprint = (context.blueprint and (context.blueprint + 1)) or 1
@@ -83,17 +75,24 @@ SMODS.Joker {
                 context.blueprint_card = nil
                 if other_joker_ret then
                     other_joker_ret.card = eff_card
-                    other_joker_ret.colour = G.C.BLUE
+                    other_joker_ret.colour = G.C.PURPLE
                     return other_joker_ret
                 end
             end
         end
 
         if context.after and not context.blueprint then
-            stg.triggers_left = stg.triggers_left - (1 / G.GAME.mxms_fridge_mod)
-            SMODS.calculate_effect(
-            { message = stg.triggers_left .. ' ' .. localize('k_mxms_left_el'), colour = G.C.RED }, card)
-            if stg.triggers_left <= 0 then
+            SMODS.scale_card(card, {
+                ref_table = stg,
+                ref_value = "hands_left",
+                scalar_value = "hand_decrement",
+                operation = "-",
+                no_message = true
+            })
+
+            SMODS.calculate_effect({ message = stg.hands_left .. ' ' .. localize('k_mxms_left_el'), colour = G.C.RED },
+            card)
+            if stg.hands_left <= 0 then
                 G.E_MANAGER:add_event(Event({
                     func = function()
                         play_sound('tarot2')
@@ -125,12 +124,7 @@ SMODS.Joker {
     end,
     update = function(self, card, front)
         if G.STAGE == G.STAGES.RUN then
-            local other_joker = nil
-            for i = 1, #G.jokers.cards do
-                if G.jokers.cards[i] == card then
-                    other_joker = G.jokers.cards[i + 1]
-                end
-            end
+            local other_joker = G.jokers.cards[#G.jokers.cards]
             if other_joker and other_joker ~= card and other_joker.config.center.blueprint_compat then
                 card.ability.blueprint_compat = "compatible"
             else

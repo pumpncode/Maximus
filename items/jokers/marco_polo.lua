@@ -12,10 +12,10 @@ SMODS.Joker {
             dMult = 3
         }
     },
-    credit = {
-        art = "Maxiss02",
-        code = "theAstra",
-        concept = "Maxiss02"
+    mxms_credits = {
+        art = { "Maxiss02" },
+        code = { "theAstra" },
+        idea = { "Maxiss02" }
     },
     blueprint_compat = true,
     cost = 3,
@@ -44,4 +44,10 @@ SMODS.Joker {
             }
         end
     end
+}
+
+SMODS.JimboQuip {
+    key = 'lq_marco_polo',
+    type = 'loss',
+    extra = { center = 'j_mxms_marco_polo' }
 }

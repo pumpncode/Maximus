@@ -6,28 +6,19 @@ SMODS.Joker {
         y = 10
     },
     rarity = 3,
-    config = {
-        extra = {
-        }
-    },
-    credit = {
-        art = "anerdymous",
-        code = "theAstra",
-        concept = "anerdymous"
+    mxms_credits = {
+        art = { "anerdymous" },
+        code = { "theAstra" },
+        idea = { "anerdymous" }
     },
     blueprint_compat = true,
     cost = 8,
-    loc_vars = function(self, info_queue, card)
-        return {
-            vars = {}
-        }
-    end,
     calculate = function(self, card, context)
         local stg = card.ability.extra
 
         if context.joker_main and #G.hand.cards > 0 then
             return {
-                x_mult = #G.hand.cards
+                x_mult = #G.hand.cards > 0 and #G.hand.cards or 1
             }
         end
     end
