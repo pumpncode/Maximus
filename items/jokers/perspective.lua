@@ -18,7 +18,8 @@ SMODS.Joker {
 -- Change Full House to not interfere with Perspective
 SMODS.PokerHand:take_ownership('Full House', {
         evaluate = function(parts, hand)
-            if #parts._3 < 1 or #parts._2 < 2 or #hand < 5 then return {} end
+            if #parts._3 < 1 or #parts._2 < 2 then return {} end
+            if hand and next(SMODS.find_card('j_mxms_perspective')) and #hand < 5 then return {} end
             return parts._all_pairs
         end
     },
